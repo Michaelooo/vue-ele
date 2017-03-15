@@ -56,5 +56,13 @@
     "webpack-merge": "^0.8.3"
   },
   "main": ".eslintrc.js",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Michaelooo/vue-ele.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Michaelooo/vue-ele/issues"
+  },
+  "homepage": "https://github.com/Michaelooo/vue-ele#readme"
 }

@@ -1,6 +1,6 @@
 <template>
 	<div class="star" :class="starType">
-		<span v-for="item in itemClass" class="star-item" :class="itemClass">{{item}}</span>
+		<span v-for="item in itemClass" class="star-item" :class="itemClass" track-by="$index">{{item}}</span>
 	</div>
 </template>
 <script type="text/ecmascript6">
@@ -41,7 +41,7 @@ const CLS_OFF ="off";
 	}
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
-import "../../common/stylus/mixin.styl"
+@import "../../common/stylus/mixin.styl"
 	.star
 		font-size: 0
 		.star-item

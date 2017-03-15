@@ -1,5 +1,5 @@
-<template>
-	<div class="header">
+<!-- <template>
+	<div class="goods">
 		<div class="content-wrapper">
 			<div class="avatar">
 				<img width="64" height="64" :src="seller.avatar" alt="">
@@ -99,4 +99,4 @@
 					.text
 						line-height: 12px
 						font-size: 12px
-</style>
+</style> -->
