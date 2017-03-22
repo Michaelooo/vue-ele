@@ -1,6 +1,6 @@
 <template>
 	<div class="star" :class="starType">
-		<span v-for="item in itemClass" class="star-item" :class="itemClass" track-by="$index">{{item}}</span>
+		<span v-for="item in itemClass" class="star-item" :class="itemClass[$index]" track-by="$index">{{item}}</span>
 	</div>
 </template>
 <script type="text/ecmascript6">
@@ -51,7 +51,7 @@ const CLS_OFF ="off";
 			.star-item
 				width: 20px
 				height: 20px
-				margin-rigjt: 22px
+				margin-right: 22px
 				background-size: 20px 20px
 				&:last-child:
 					margin-right: 0
@@ -65,7 +65,7 @@ const CLS_OFF ="off";
 			.star-item
 				width: 15px
 				height: 15px
-				margin-rigjt: 6px
+				margin-right: 6px
 				background-size: 15px 15px
 				&:last-child:
 					margin-right: 0
@@ -79,7 +79,7 @@ const CLS_OFF ="off";
 			.star-item
 				width: 10px
 				height: 10px
-				margin-rigjt: 3px
+				margin-right: 3px
 				background-size: 10px 10px
 				&:last-child:
 					margin-right: 0

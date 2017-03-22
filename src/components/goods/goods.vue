@@ -1,32 +1,48 @@
-<!-- <template>
+<template>
 	<div class="goods">
-		<div class="content-wrapper">
-			<div class="avatar">
-				<img width="64" height="64" :src="seller.avatar" alt="">
-			</div>
-			<div class="content">
-				<div class="title">
-					<span class="brand"></span>
-					<span class="name">{{seller.name}}</span>
-				</div>
-				<div class="description">
-					{{seller.description}}/{{seller.deliveryTime}}分钟送达
-				</div>
-				<div v-if="seller.supports" class="support">
-					<span class="icon" :class="classMap[seller.supports[0].type]"></span>
-					<span class="text">{{seller.supports[0].description}}</span>
-
-				</div>
-			</div>
+		<div class="menu-wrapper">
+			<ul>
+				<li v-for = "item in goods"  class="menu-item">
+					<span class="text border-1px">
+						<span class="icon" v-show = "item.type>0" :class="classMap[item.type]"></span>{{item.name}}
+					</span>
+				</li>
+			</ul>
 		</div>
-		<div class="bulletin-wrapper"></div>
+		<div class="foods-wrapper">
+			<ul>
+				<li v-for="item in goods" class="food-list">
+					<h1 class="title">{{item.name}}</h1>
+					<ul>
+						<li v-for="food in item.foods" class="food-item">
+							<div class="icon">
+								<img :src="food.icon">
+							</div>
+							<div class="content">
+								<h2 class="name">{{food.name}}</h2>
+								<p class="desc">{{food.description}}</p>
+								<div class="extra">
+									<span>月售{{food.sellCount}}份</span>
+									<span>好评率{{food.rating}}%</span>
+								</div>
+								<div class="price">
+									<span>￥{{food.price}}</span>
+									<span v-show="food.oldPrice">￥{{food.price}}</span>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
-<script>
+<script type="text/ecmascript-6">
+const ERR_OK = 0;
 	export default {
 		data () {
 			return {
-
+				goods: {}
 			};
 		},
 		props: {
@@ -36,6 +52,12 @@
 		},
 		created () {
 			this.classMap = ['decrease', 'discount', 'guarantee', 'invoice', 'special'];
+			this.$http.get('/api/goods').then((response) => {
+				response = response.body;
+				if (response.body !== ERR_OK) {
+					this.goods = response.data;
+				}
+			});
 		},
 		methods: {
 
@@ -44,59 +66,49 @@
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
 @import "../../common/stylus/mixin.styl"
-	.header
-		color: #fff
-		background: #000
-		.content-wrapper
-			padding: 24px 12px 18px 24px
-			font-size: 0
-			.avatar
-				display: inline-block
-				vertical-align: top
-				img
-					border-radius: 2px
-			.content
-				display: inline-block
-				margin-left: 16px
-				font-size: 14px
-				.title
-					margin: 2px 0 8px 0
-					.brand
-						display:inline-block
-						vertical-align: top
-						width: 30px
-						height: 18px
-						bg-image('brand')
-						background-size: 30px 18px
-						background-repeat: no-repeat
-					.name
-						margin-left: 12px
-						font-size: 16px
-						line-height: 18px
-						font-weight: bold
-				.description
-					margin-bottom: 10px
-					line-height: 12px
+	.goods
+		display: flex
+		position:absolute
+		width: 100%
+		top: 174px
+		bottom: 46px
+		overflow: hidden
+		.menu-wrapper
+			flex: 0 0 80px
+			width: 80px
+			background-color: #f3f5f7
+			.menu-item
+				display: table
+				width: 54px
+				height: 56px
+				font-size: 24px
+				padding: 0 12px
+				font-weight: 200
+				line-height: 14px
+				// color: rgb(240, 20, 20)
+				.icon
+					display: inline-block
+					width: 12px
+					height: 12px
+					margin-right: 2px
+					background-size: 12px 12px
+					background-repeat: no-repeat
+					&.decrease
+						bg-image('decrease_3')
+					&.discount
+						bg-image('discount_3')
+					&.guarantee
+						bg-image('guarantee_3')
+					&.invoice
+						bg-image('invoice_3')
+					&.special
+						bg-image('special_3')
+				.text
+					display: table-cell
+					width: 56px
 					font-size: 12px
-				.support
-					.icon
-						display: inline-block
-						width: 12px
-						height: 12px
-						margin-right: 4px
-						background-size: 12px 12px
-						background-repeat: no-repeat
-						&.decrease
-							bg-image('decrease_1')
-						&.discount
-							bg-image('discount_1')
-						&.guarantee
-							bg-image('guarantee_1')
-						&.invoice
-							bg-image('invoice_1')
-						&.special
-							bg-image('special_1')
-					.text
-						line-height: 12px
-						font-size: 12px
-</style> -->
+					vertical-align: middle
+					border-1px(rgba(7, 17, 27, 0.2))
+		.foods-wrapper
+			flex: 1
+</style>

@@ -30,7 +30,7 @@
 		<div class="background">
 			<img :src="seller.avatar" alt="" width="100%" height="100%">
 		</div>
-		<div v-show="detailShow" class="detail" transition="fade">
+		<div v-show="detailShow" class="detail">
 			<div class="detail-wrap" clearfix>
 				<div class="detail-main">
 					<h1 class="name">{{seller.name}}</h1>
@@ -57,10 +57,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="detail-close" @click="hideDetail">
-					<i class="icon-close">
-						
-					</i>
+				<div class="detail-close" >
+					<i class="icon-close" @click="hideDetail"></i>
 				</div>
 			</div>
 		</div>
@@ -207,6 +205,7 @@ import star from '../star/star.vue';
 			width: 100%
 			height: 100%
 			z-index: -1
+			overflow: hidden
 			filter: blur(10px)
 		.detail
 			position: fixed
@@ -215,16 +214,16 @@ import star from '../star/star.vue';
 			width: 100%
 			height: 100%
 			z-index: 100
-			overflow: auto
+			overflow: hidden
 			background: rgba(7, 17, 27, 0.8)
-			transition: all 0.5s
+			// transition: all 0.5s
 			backdrop-filter: blur(10px)
-			$.fade-transition
-				opacity: 1
-				background: rgba(7, 17, 27, 0.8)
-			$.fade-enter,$.fade-leave
-				opacity: 1
-				background: rgba(7, 17, 27, 0.2)
+			// $.fade-transition
+			// 	opacity: 1
+			// 	background: rgba(7, 17, 27, 0.8)
+			// $.fade-enter,$.fade-leave
+			// 	opacity: 1
+			// 	background: rgba(7, 17, 27, 0.2)
 			.detail-wrap
 				width: 100%
 				min-height: 100%
@@ -242,20 +241,22 @@ import star from '../star/star.vue';
 						text-align: center
 					.title
 						display: flex
+						display: -webkit-flex
 						width: 80%
 						margin: 28px auto 24px auto
 						.line
 							flex: 1
 							position: relative
-							top: -64px
+							top: -7px
 							border-bottom: 1px solid  rgba(255, 255, 255, 0.2)
 						.text
-							padding: 0 2px
+							padding: 0 20px
 							font-size: 14px
 							font-weight: 700
 					.supports
 						width: 80%
 						margin: 0 auto
+						text-align: left
 						.support-item
 							padding: 0 12px
 							margin-bottom: 12px
@@ -264,7 +265,7 @@ import star from '../star/star.vue';
 								margin-bottom: 0
 							.icon
 								display:inline-block
-								weight: 16px
+								width: 16px
 								height: 16px
 								vertical-align: top
 								margin-right: 6px
@@ -283,10 +284,12 @@ import star from '../star/star.vue';
 							.text
 								line-height: 16px
 								font-size: 12px
+								text-align: left
 					.bulletin
 						width: 80%
 						margin: 0 auto
 						.content 
+							text-align: left
 							padding: 0 12px
 							line-height: 24px
 							font-size: 12px
@@ -294,7 +297,7 @@ import star from '../star/star.vue';
 				position: relative
 				width: 32px
 				height: 32px
-				margin: -64px auto 0 auto
+				margin: 64px auto 0 auto
 				clear: both
 				font-size: 32px
 </style>
