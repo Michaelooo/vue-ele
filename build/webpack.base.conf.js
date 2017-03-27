@@ -1,17 +1,28 @@
 var path = require('path')
 var config = require('../config')
 var utils = require('./utils')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 var projectRoot = path.resolve(__dirname, '../')
 
 module.exports = {
 	entry: {
 		app: './src/main.js'
+		// vendor: ['jquery']
 	},
 	output: {
 		path: config.build.assetsRoot,
 		publicPath: process.env.NODE_ENV === 'production' ? config.build.assetsPublicPath : config.dev.assetsPublicPath,
-		filename: '[name].js'
+		filename: '[name].[hash].js'
 	},
+	plugins: [
+		// new webpack.optimize.CommonsChunkPlugin({
+		// 	name: ['vendor', 'manifest']
+		// }),
+		new HtmlWebpackPlugin({
+			title: 'ele',
+			template: 'index.html'
+		})
+	],
 	resolve: {
 		extensions: ['', '.js', '.vue'],
 		fallback: [path.join(__dirname, '../node_modules')],

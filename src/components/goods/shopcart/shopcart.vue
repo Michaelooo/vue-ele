@@ -21,17 +21,11 @@
 </template>
 <script type="text/ecmascript-6">
 	export default {
-		data () {
-
-		},
 		props: {
 			selectFoods: {
 				type: Array,
 				default () {
-					return [{
-						price: 20,
-						count: 1
-					}];
+					return [];
 				}
 			},
 			deliveryPrice: {
@@ -48,6 +42,7 @@
 				let total = 0;
 				this.selectFoods.forEach((food) => {
 					total += food.price * food.count;
+					console.log('total' + total);
 				});
 				return total;
 			},
