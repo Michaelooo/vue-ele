@@ -36,7 +36,7 @@
 				</li>
 			</ul>
 		</div>
-		<shopcart :select-foods="selectedFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+		<shopcart v-ref:shopcart :select-foods="selectedFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 	</div>
 </template>
 <script type="text/ecmascript-6">
@@ -129,6 +129,16 @@ const ERR_OK = 0;
 				let el = foodList[index];
 				this.foodsScroll.scrollToElement(el, 300);
 				// console.log(index);
+			},
+			_drop (target) {
+				this.$nextTick(() => {
+					this.$refs.shopcart.drop(target);
+				});
+			}
+		},
+		events: {
+			'cart.add' (target) {
+				this._drop(target);
 			}
 		}
 	};
@@ -218,13 +228,12 @@ const ERR_OK = 0;
 						color: rgb(7,17,27)
 					.desc, .extra
 						line-height: 10px
-						height: 10px
 						font-size: 10px
 						color: rgb(147,153,159)
 					.desc
+						line-height: 12px
 						margin-bottom: 8px
 					.extra
-						line-height: 10px
 						.count
 							margin-right: 12px
 					.price

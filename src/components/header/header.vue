@@ -30,7 +30,7 @@
 		<div class="background">
 			<img :src="seller.avatar" alt="" width="100%" height="100%">
 		</div>
-		<div v-show="detailShow" class="detail">
+		<div v-show="detailShow" class="detail" transition="fade">
 			<div class="detail-wrap" clearfix>
 				<div class="detail-main">
 					<h1 class="name">{{seller.name}}</h1>
@@ -216,14 +216,14 @@ import star from '../star/star.vue';
 			z-index: 100
 			overflow: hidden
 			background: rgba(7, 17, 27, 0.8)
-			// transition: all 0.5s
+			transition: all 0.5s
 			backdrop-filter: blur(10px)
-			// $.fade-transition
-			// 	opacity: 1
-			// 	background: rgba(7, 17, 27, 0.8)
-			// $.fade-enter,$.fade-leave
-			// 	opacity: 1
-			// 	background: rgba(7, 17, 27, 0.2)
+			&.fade-transition
+				opacity: 1
+				background: rgba(7, 17, 27, 0.8)
+			&.fade-enter,&.fade-leave
+				opacity: 1
+				background: rgba(7, 17, 27, 0.2)
 			.detail-wrap
 				width: 100%
 				min-height: 100%

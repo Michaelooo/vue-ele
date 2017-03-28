@@ -1,7 +1,7 @@
 <template>
 	<div class="cartControl">
-		<div class="cart-decrease " v-show="food.count>0" @click="decreaseCart">
-			<span class="inner icon-remove_circle_outline" transition:"move"></span>
+		<div class="cart-decrease " v-show="food.count>0" @click="decreaseCart" transition="move">
+			<span class="inner icon-remove_circle_outline" ></span>
 		</div>
 		<div class="cart-count" v-show="food.count>0">{{food.count}}</div>
 		<div class="cart-add icon-add_circle" @click="addCart">
@@ -30,6 +30,7 @@ import Vue from 'vue';
 				} else {
 					this.food.count++;
 				}
+				this.$dispatch('cart.add', event.target);
 			},
 			decreaseCart (event) {
 				if (!event._constructed) {
@@ -51,6 +52,7 @@ import Vue from 'vue';
 			display: inline-block
 			padding: 6px
 			transition: all 0.4s linear
+			transform: rotate(90deg)
 			&.move-transition
 				opacity: 1
 				transform: translate3D(0,0,0)
