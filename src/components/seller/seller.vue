@@ -27,7 +27,11 @@
 							<span class="stress">{{seller.deliveryTime}}</span>分钟
 						</div>
 					</li>
-				</ul>	
+				</ul>
+				<div class="favorite">
+					<span class="icon-favorite" :class="{'active': favorite}" @click="toggleFavorite"></span>
+					<span class="text">{{favoriteText}}</span>
+				</div>	
 			</div>
 			<split></split>
 			<div class="bulletin">
@@ -41,7 +45,25 @@
 						<span class="text" :class="classMap[seller.supports[$index].description]">{{item.description}}</span>
 					</li>
 				</ul>
+			</div>
+			<split></split>
+			<div class="pics">
+				<h1 class="title">商家实景</h1>
+				<div class="pic-wrapper" v-el:pic-wrapper>
+					<ul class="pic-list" v-el:pic-list>
+						<li class="pic-item" v-for="pic in seller.pics">
+							<img :src="pic" width="120px" height="90px">
+						</li>
+					</ul>
+				</div>
 			</div>			
+			<split></split>
+			<div class="info">
+				<h1 class="title border-1px">商家信息</h1>
+				<ul>
+					<li class="info-item" v-for="info in seller.infos">{{info}}</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </template>
@@ -50,6 +72,14 @@ import star from '../star/star.vue';
 import split from '../split/split.vue';
 import BScroll from 'better-scroll';
 	export default {
+		data () {
+			return {
+				favorite: {
+					type: Boolean,
+					default: false
+				}
+			};
+		},
 		props: {
 			seller: {
 				type: Object
@@ -65,10 +95,17 @@ import BScroll from 'better-scroll';
 		watch: {
 			'seller' () {
 				this._initScroll();
+				this._initPics();
 			}
 		},
 		ready () {
 			this._initScroll();
+			this._initPics();
+		},
+		computed: {
+			favoriteText () {
+				return this.favorite ? '已收藏' : '收藏';
+			}
 		},
 		methods: {
 			_initScroll () {
@@ -79,6 +116,30 @@ import BScroll from 'better-scroll';
 				} else {
 					this.scroll.refresh();
 				}
+			},
+			_initPics () {
+				if (this.seller.pics) {
+					let picWidth = 120;
+					let margin = 6;
+					let width = (picWidth + margin) * this.seller.pics.length - margin;
+					this.$els.picList.style.width = width + 'px';
+					if (!this.scroll) {
+						this.$nextTick(() => {
+							this.scroll = new BScroll(this.$els.picWrapper, {
+								scrollX: true,
+								eventPassthrough: 'vertical'
+							});
+						});
+					} else {
+						this.scroll.refresh();
+					}
+				}
+			},
+			toggleFavorite (event) {
+				if (!event._constructed) {
+					return;
+				}
+				this.favorite = !this.favorite;
 			}
 		}
 	};
@@ -135,6 +196,23 @@ import BScroll from 'better-scroll';
 							color: rgb(7,17,27)
 							.stress
 								font-size: 24px
+				.favorite
+					position: absolute
+					width: 50px
+					right: 11px
+					top: 18px
+					text-align: center
+					.icon-favorite
+						display: block
+						line-height: 24px
+						font-size: 24px
+						color: #d4d6d9
+						&.active
+							color: rgb(240,20,20)
+					.text
+						line-height: 10px
+						font-size: 10px
+						color: #4d555d
 			.bulletin
 				padding: 18px 18px 0 18px
 				.title
@@ -179,4 +257,41 @@ import BScroll from 'better-scroll';
 						color: rgb(7,17,27)
 						line-height: 16px
 						vertical-align: top
+			.pics
+				padding: 18px
+				.title
+					margin-bottom: 12px
+					line-height: 14px
+					color: rgb(7,17,27)
+					font-size: 14px
+				.pic-wrapper
+					width: 100%
+					overflow: hidden
+					white-space: nowrap
+					.pic-list
+						font-size: 0
+						.pic-item
+							display: inline-block
+							margin-right: 6px
+							width: 120px
+							height: 90px
+							&:last-child
+								margin: 0
+			.info
+				padding: 18px 18px 0 18px
+				.title
+					padding-bottom: 12px
+					line-height: 14px
+					border-1px(rgba(7,17,27,0.1))
+					color: rgb(7,17,27)
+					font-size: 14px
+				.info-item
+					padding: 16px 12px
+					line-height: 16px
+					border-1px(rgba(7,17,27,0.1))
+					color: rgb(7,17,27)
+					font-size: 12px
+					&:last-child
+						border-none()
+					
 </style>
