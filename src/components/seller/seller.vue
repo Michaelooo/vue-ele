@@ -52,7 +52,7 @@
 				<div class="pic-wrapper" v-el:pic-wrapper>
 					<ul class="pic-list" v-el:pic-list>
 						<li class="pic-item" v-for="pic in seller.pics">
-							<img :src="pic" width="120px" height="90px">
+							<img :src="pic" width="120" height="90">
 						</li>
 					</ul>
 				</div>
@@ -123,15 +123,15 @@ import BScroll from 'better-scroll';
 					let margin = 6;
 					let width = (picWidth + margin) * this.seller.pics.length - margin;
 					this.$els.picList.style.width = width + 'px';
-					if (!this.scroll) {
+					if (!this.picScroll) {
 						this.$nextTick(() => {
-							this.scroll = new BScroll(this.$els.picWrapper, {
+							this.picScroll = new BScroll(this.$els.picWrapper, {
 								scrollX: true,
 								eventPassthrough: 'vertical'
 							});
 						});
 					} else {
-						this.scroll.refresh();
+						this.picScroll.refresh();
 					}
 				}
 			},
