@@ -1,27 +1,20 @@
-# sell
+# 饿了么项目（Vue实现）
 
-> sell app
+> 用Vue实现的ele移动页面，目前已实现外卖列表页、商家信息页、评论页，接下来会抽时间实现登陆与模拟付款功能。
 
-## Build Setup
+## 截图
+![](https://github.com/Michaelooo/vue-ele/blob/master/screenshot/scrennshot_goods.png)  
+![](https://github.com/Michaelooo/vue-ele/blob/master/screenshot/scrennshot_ratings.png)  
+![](https://github.com/Michaelooo/vue-ele/blob/master/screenshot/scrennshot_seller.png)  
 
+## 安装步骤
 ``` bash
-# install dependencies
+# 安装所有依赖
 npm install
 
-# serve with hot reload at localhost:8080
+# 启动
 npm run dev
 
-# build for production with minification
+#编译
 npm run build
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
