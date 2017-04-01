@@ -1,13 +1,15 @@
 <template>
-	<div class="ratingselect">
-		<div class="rating-type">
-			<span class="block positive" :class="{'active':selectType === 2}" @click="select(2, $event)">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
-			<span class="block positive" :class="{'active':selectType === 0}" @click="select(0, $event)">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
-			<span class="block negative" :class="{'active':selectType === 1}" @click="select(1, $event)">{{desc.negative}}<span class="count">{{negatives.length}}</span></span>
-		</div>
-		<div class="rating-switch" :class="{'on':onlyContent}" @click="toggleContent">
-			<span class="icon-check_circle"></span>
-			<span class="text">只看有内容的评价</span>
+	<div>
+		<div class="ratingselect">
+			<div class="rating-type">
+				<span class="block positive" :class="{'active':selectType === 2}" @click="select(2, $event)">{{desc.all}}<span class="count">{{ratings.length}}</span></span>
+				<span class="block positive" :class="{'active':selectType === 0}" @click="select(0, $event)">{{desc.positive}}<span class="count">{{positives.length}}</span></span>
+				<span class="block negative" :class="{'active':selectType === 1}" @click="select(1, $event)">{{desc.negative}}<span class="count">{{negatives.length}}</span></span>
+			</div>
+			<div class="rating-switch" :class="{'on':onlyContent}" @click="toggleContent">
+				<span class="icon-check_circle"></span>
+				<span class="text">只看有内容的评价</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -59,15 +61,13 @@ const ALL = 2;
 				if (!event._constructed) {
 					return;
 				}
-				this.selectType = type;
-				this.$dispatch('ratingtype.select', type);
+				this.$emit('select', type);
 			},
 			toggleContent (event) {
 				if (!event._constructed) {
 					return;
 				}
-				this.onlyContent = !this.onlyContent;
-				this.$dispatch('content.toggle', this.onlyContent);
+				this.$emit('toggle');
 			}
 		}
 	};

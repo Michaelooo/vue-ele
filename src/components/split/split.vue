@@ -1,6 +1,7 @@
 <template>
-	<div class="split">
-
+	<div>
+		<div class="split">
+		</div>
 	</div>
 </template>
 <script type="text/ecmascript-6">

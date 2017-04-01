@@ -1,60 +1,64 @@
 <template>
-	<div class="food" v-show="showFlag" transition="move" v-el:food>
-		<div class="food-content">
-			<div class="image-header">
-				<img :src="food.image">
-			</div>
-			<div class="back">
-				<i class="icon-arrow_lift" @click="hide"></i>
-			</div>
-			<div class="content">
-				<div class="title">{{food.name}}</div>
-				<div class="detail">
-					<span class="sell-count">月售{{food.sellCount}}</span>
-					<span class="rating">好评率{{food.rating}}%</span>
+	<transition name="move">
+		<div class="food" v-show="showFlag" ref="food">
+			<div class="food-content">
+				<div class="image-header">
+					<img :src="food.image">
 				</div>
-				<div class="price">
-					<span class="now">￥{{food.price}}</span><span class="old" v-show="food.oldPrice">￥{{food.price}}</span>
+				<div class="back">
+					<i class="icon-arrow_lift" @click="hide"></i>
 				</div>
-				<div class="cartcontrol-wrap">
-					<cart-control :food="food"></cart-control>
+				<div class="content">
+					<div class="title">{{food.name}}</div>
+					<div class="detail">
+						<span class="sell-count">月售{{food.sellCount}}</span>
+						<span class="rating">好评率{{food.rating}}%</span>
+					</div>
+					<div class="price">
+						<span class="now">￥{{food.price}}</span><span class="old" v-show="food.oldPrice">￥{{food.price}}</span>
+					</div>
+					<div class="cartcontrol-wrap">
+						<cart-control @add = "addFood" :food="food"></cart-control>
+					</div>
+					<transition name="fade">
+						<div class="buy" v-show="!food.count || food.count === 0" @click.stop.prevent="addFirst">加入购物车</div>
+					</transition>
 				</div>
-				<div class="buy" v-show="!food.count || food.count === 0" @click.stop.prevent="addFirst" transition="fade">加入购物车</div>
-			</div>
-			<split></split>
-			<div class="info">
-				<h1 class="title">商品信息</h1>
-				<p class="text">{{food.info}}</p>
-			</div>
-			<split></split>
-			<div class="ratings">
-				<h1 class="title">商品评价</h1>
-				<ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
-				<div class="rating-wrapper">
-					<ul v-show="food.ratings && food.ratings.length">
-						<li v-for="rating in food.ratings" class="rating-item" v-show="needShow(rating.rateType, rating.text)">
-							<div class="user">
-								<span class="name">{{rating.username}}</span>
-								<img :src="rating.avatar" class="avatar" width="12px" height="12px">
-							</div>
-							<div class="time">{{rating.rateTime  | formatDate}}</div>
-							<p class="text">
-								<span :class="{'icon-thumb_up':rating.rateType === 0,'icon-thumb_down':rating.rateType === 1}"></span>{{rating.text}}
-							</p>
-						</li>
-					</ul>
-					<div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+				<split></split>
+				<div class="info">
+					<h1 class="title">商品信息</h1>
+					<p class="text">{{food.info}}</p>
+				</div>
+				<split></split>
+				<div class="ratings">
+					<h1 class="title">商品评价</h1>
+					<ratingselect @select="selectRating" @toggle="toggleContent" :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
+					<div class="rating-wrapper">
+						<ul v-show="food.ratings && food.ratings.length">
+							<li v-for="rating in food.ratings" class="rating-item" v-show="needShow(rating.rateType, rating.text)">
+								<div class="user">
+									<span class="name">{{rating.username}}</span>
+									<img :src="rating.avatar" class="avatar" width="12px" height="12px">
+								</div>
+								<div class="time">{{rating.rateTime  | formatDate}}</div>
+								<p class="text">
+									<span :class="{'icon-thumb_up':rating.rateType === 0,'icon-thumb_down':rating.rateType === 1}"></span>{{rating.text}}
+								</p>
+							</li>
+						</ul>
+						<div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
-import cartControl from '../cartControl/cartControl.vue';
-import split from '../split/split.vue';
-import ratingselect from '../ratingselect/ratingselect.vue';
-import {formatDate} from '../../common/js/date';
+import cartControl from 'components/cartControl/cartControl.vue';
+import split from 'components/split/split.vue';
+import ratingselect from 'components/ratingselect/ratingselect.vue';
+import {formatDate} from 'common/js/date';
 import Vue from 'vue';
 // const POSITIVE = 0;
 // const NEGATIVE = 1;
@@ -82,20 +86,6 @@ const ALL = 2;
 			split,
 			ratingselect
 		},
-		events: {
-			'ratingtype.select' (type) {
-				this.selectType = type;
-				this.$nextTick(() => {
-					this.scroll.refresh();
-				});
-			},
-			'content.toggle' (onlyContent) {
-				this.onlyContent = onlyContent;
-				this.$nextTick(() => {
-					this.scroll.refresh();
-				});
-			}
-		},
 		filters: {
 			formatDate (time) {
 				let date = new Date(time);
@@ -110,7 +100,7 @@ const ALL = 2;
 				this.$nextTick(() => {
 					if (!this.scroll) {
 						// 这个地方入过坑
-						this.scroll = new BScroll(this.$els.food, {
+						this.scroll = new BScroll(this.$refs.food, {
 							click: true
 						});
 					} else {
@@ -125,10 +115,23 @@ const ALL = 2;
 				if (!event._constructed) {
 					return;
 				}
-				if (!this.food.count) {
-					Vue.set(this.food, 'count', 1);
-				}
-				this.$dispatch('cart.add', event.target);
+				this.$emit('add', event.target);
+				Vue.set(this.food, 'count', 1);
+			},
+			addFood (target) {
+				this.$emit('add', target);
+			},
+			selectRating (type) {
+				this.selectTYpe = type;
+				this.$nextTick(() => {
+					this.scroll.refresh();
+				});
+			},
+			toggleContent() {
+				this.onlyContent = !this.onlyContent;
+				this.$nextTick(() => {
+					this.scroll.refresh();
+				});
 			},
 			needShow (type, text) {
 				if (this.onlyContent && !text) {
@@ -153,11 +156,11 @@ const ALL = 2;
 		z-index: 30
 		width: 100%
 		background: #fff
-		&.move-transition
+		transform: translate3D(0,0,0)
+		&.move-enter-active, &.move-leave-active
 			transition: all 0.2s linear
-			transform: translate3D(0,0,0)
-		&.move-enter, &.move-leave
-			transform: translate3D(100%,0,0)
+		&.move-enter, &.move-leave-active
+			transform: translate3d(100%, 0, 0)
 		.image-header
 			position: relative
 			width: 100%
@@ -225,11 +228,12 @@ const ALL = 2;
 				font-size: 10px
 				color: #fff
 				background: rgb(0,160,220)
-				&.fade-transition
-					opacity: 1
+				opacity: 1
+				&.fade-enter-active, &.fade-leave-active
 					transition: all 0.2s
-				&.fade-enter, &.fade-leave
+				&.fade-enter, &.fade-leave-active
 					opacity: 0
+					z-index: -1
 		.info
 			padding: 18px
 			.title

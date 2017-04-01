@@ -1,62 +1,64 @@
 <template>
-	<div class="ratings-wrapper" v-el:ratings>
-		<div class="ratings-content">
-			<div class="overview">
-				<div class="overview-left">
-					<h1 class="score">{{seller.score}}</h1>
-					<div class="title">综合评分</div>
-					<div class="rank">高于周边商家{{seller.rankRate}}%</div>
-				</div>
-				<div class="overview-right">
-					<div class="score-wrapper">
-						<span class="title">服务态度</span>
-						<star :size="36" :score="seller.serviceScore"></star>
-						<span class="score">{{seller.serviceScore}}</span>
+	<div>
+		<div class="ratings-wrapper" ref="ratings">
+			<div class="ratings-content">
+				<div class="overview">
+					<div class="overview-left">
+						<h1 class="score">{{seller.score}}</h1>
+						<div class="title">综合评分</div>
+						<div class="rank">高于周边商家{{seller.rankRate}}%</div>
 					</div>
-					<div class="score-wrapper">
-						<span class="title">商品评分</span>
-						<star :size="36" :score="seller.foodScore"></star>
-						<span class="score">{{seller.foodScore}}</span>
-					</div>
-					<div class="delivery-wrapper">
-						<span class="title">送达时间</span>
-						<span class="delivery">{{seller.deliveryTime}}分钟</span>
-					</div>
-				</div>
-			</div>
-			<split></split>
-			<ratingselect :select-type="selectType" :only-content="onlyContent" :ratings="ratings"></ratingselect>
-			<div class="rating-wrapper">
-				<ul>
-					<li v-for="rating in ratings" class="rating-item" v-show="needShow(rating.rateType, rating.text)">
-						<div class="avatar">
-							<img :src="rating.avatar" width="28px" height="28px">
+					<div class="overview-right">
+						<div class="score-wrapper">
+							<span class="title">服务态度</span>
+							<star :size="36" :score="seller.serviceScore"></star>
+							<span class="score">{{seller.serviceScore}}</span>
 						</div>
-						<div class="content">
-							<div class="name">{{rating.username}}</div>
-							<div class="star-wrapper">
-								<star :size="24" :score="rating.score"></star>
-								<span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
-							</div>
-							<p class="text">{{rating.text}}</p>
-							<div class="recommend" v-show="rating.recommend && rating.recommend.length">
-								<span class="icon-thumb_up"></span>
-								<span v-for="item in rating.recommend" class="item">{{item}}</span>
-							</div>
-							<div class="time">{{rating.rateTime | formatDate}}</div>
+						<div class="score-wrapper">
+							<span class="title">商品评分</span>
+							<star :size="36" :score="seller.foodScore"></star>
+							<span class="score">{{seller.foodScore}}</span>
 						</div>
-					</li>
-				</ul>
+						<div class="delivery-wrapper">
+							<span class="title">送达时间</span>
+							<span class="delivery">{{seller.deliveryTime}}分钟</span>
+						</div>
+					</div>
+				</div>
+				<split></split>
+				<ratingselect @select="selectRating" @toggle="toggleContent" :select-type="selectType" :only-content="onlyContent" :ratings="ratings"></ratingselect>
+				<div class="rating-wrapper">
+					<ul>
+						<li v-for="rating in ratings" class="rating-item" v-show="needShow(rating.rateType, rating.text)">
+							<div class="avatar">
+								<img :src="rating.avatar" width="28px" height="28px">
+							</div>
+							<div class="content">
+								<div class="name">{{rating.username}}</div>
+								<div class="star-wrapper">
+									<star :size="24" :score="rating.score"></star>
+									<span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
+								</div>
+								<p class="text">{{rating.text}}</p>
+								<div class="recommend" v-show="rating.recommend && rating.recommend.length">
+									<span class="icon-thumb_up"></span>
+									<span v-for="item in rating.recommend" class="item">{{item}}</span>
+								</div>
+								<div class="time">{{rating.rateTime | formatDate}}</div>
+							</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
-import star from '../star/star.vue';
-import split from '../split/split.vue';
-import ratingselect from '../ratingselect/ratingselect.vue';
-import {formatDate} from '../../common/js/date';
+import star from 'components/star/star.vue';
+import split from 'components/split/split.vue';
+import ratingselect from 'components/ratingselect/ratingselect.vue';
+import {formatDate} from 'common/js/date';
 
 const ALL = 2;
 const ERR_OK = 0;
@@ -77,26 +79,12 @@ const ERR_OK = 0;
 				if (response.errno === ERR_OK) {
 					this.ratings = response.data;
 					this.$nextTick(() => {
-						this.scroll = new BScroll(this.$els.ratings, {
+						this.scroll = new BScroll(this.$refs.ratings, {
 							click: true
 						});
 					});
 				}
 			});
-		},
-		events: {
-			'ratingtype.select' (type) {
-				this.selectType = type;
-				this.$nextTick(() => {
-					this.scroll.refresh();
-				});
-			},
-			'content.toggle' (onlyContent) {
-				this.onlyContent = onlyContent;
-				this.$nextTick(() => {
-					this.scroll.refresh();
-				});
-			}
 		},
 		methods: {
 			needShow (type, text) {
@@ -108,6 +96,18 @@ const ERR_OK = 0;
 				} else {
 					return type === this.selectType;
 				}
+			},
+			selectRating (type) {
+				this.selectType = type;
+				this.$nextTick(() => {
+					this.scroll.refresh();
+				});
+			},
+			toggleContent () {
+				this.onlyContent = !this.onlyContent;
+				this.$nextTick(() => {
+					this.scroll.refresh();
+				});
 			}
 		},
 		filters: {
@@ -166,6 +166,7 @@ const ERR_OK = 0;
 				@media only screen and (max-width: 320px)
 					padding-left: 6px
 				.score-wrapper
+					display: flex
 					margin-bottom: 8px
 					font-size: 0
 					.title
@@ -180,6 +181,7 @@ const ERR_OK = 0;
 						vertical-align: top
 					.score
 						display: inline-block
+						vertical-align: top
 						line-height: 18px
 						font-size: 12px
 						color: rgb(255,163,0)
@@ -218,6 +220,7 @@ const ERR_OK = 0;
 						color: rgb(7,17,27)
 						margin-bottom: 4px
 					.star-wrapper
+						display: flex
 						margin-bottom: 6px
 						font-size: 0
 						.star
@@ -238,11 +241,12 @@ const ERR_OK = 0;
 						margin-bottm: 8px
 					.recommend
 						line-height: 16px
-						font-size: 12px
+						font-size: 0px
 						color: rgb(0,160,220)
 						.icon-thumb_up, .item
 							display: inline-block
 							margin: 0 8px 4px 0
+							font-size: 9px
 						.icon-thumb_up
 							color: rgb(0,160,220)
 						.item

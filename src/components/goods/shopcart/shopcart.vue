@@ -1,52 +1,62 @@
 <template>
-	<div class="shopcart">
-		<div class="content" @click="toggleList">
-			<div class="content-left">
-				<div class="logo-wrapper">
-					<div class="logo" :class="{'highlight':totalCount>0}">
-						<i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+	<div>
+		<div class="shopcart">
+			<div class="content" @click="toggleList">
+				<div class="content-left">
+					<div class="logo-wrapper">
+						<div class="logo" :class="{'highlight':totalCount>0}">
+							<i class="icon-shopping_cart" :class="{'highlight':totalCount>0}"></i>
+						</div>
+						<div class="num" v-show="totalCount>0">{{totalCount}}</div>
 					</div>
-					<div class="num" v-show="totalCount>0">{{totalCount}}</div>
+					<div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
+					<div class="desc">另需配送费￥{{deliveryPrice}}元</div>
 				</div>
-				<div class="price" :class="{'highlight':totalPrice>0}">￥{{totalPrice}}</div>
-				<div class="desc">另需配送费￥{{deliveryPrice}}元</div>
-			</div>
-			<div class="content-right">
-				<div class="pay" :class="payClass" @click.stop.prevent="pay">
-					{{payDesc}}
+				<div class="content-right">
+					<div class="pay" :class="payClass" @click.stop.prevent="pay">
+						{{payDesc}}
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="ball-container">
-			<div class="ball" v-for="ball in balls" v-show="ball.show" transition="drop">
-				<div class="inner inner-hook"></div>
-			</div>
-		</div>
-		<div class="shopcart-list" v-show="listShow" transition="fold">
-			<div class="list-header">
-				<h1 class="title">购物车</h1>
-				<span class="empty" @click="empty">清空</span>
-			</div>
-			<div class="list-content" v-el:list-content>
-				<ul>
-					<li v-for="food in selectFoods" class="food">
-						<span class="name">{{food.name}}</span>
-						<div class="price">
-							<span>￥{{food.price*food.count}}</span>
+			<div class="ball-container">
+				<div v-for="ball in balls">
+					<transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
+						<div class="ball" v-show="ball.show">
+							<div class="inner inner-hook"></div>
 						</div>
-						<div class="cartcontrol-wrapper">
-							<cart-control :food="food"></cart-control>
-						</div>
-					</li>
-				</ul>
+					</transition>
+				</div>
 			</div>
+			<transition name="fold">
+				<div class="shopcart-list" v-show="listShow">
+					<div class="list-header">
+						<h1 class="title">购物车</h1>
+						<span class="empty" @click="empty">清空</span>
+					</div>
+					<div class="list-content" ref="listContent">
+						<ul>
+							<li v-for="food in selectFoods" class="food">
+								<span class="name">{{food.name}}</span>
+								<div class="price">
+									<span>￥{{food.price*food.count}}</span>
+								</div>
+								<div class="cartcontrol-wrapper">
+									<cart-control :food="food"></cart-control>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</transition>
 		</div>
+		<transition name="fade">
+			<div class="list-mask" v-show="listShow" @click="hideList"></div>
+		</transition>
 	</div>
-	<div class="list-mask" v-show="listShow" transition="fade" @click="hideList"></div>
 </template>
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll';
-import cartControl from '../../cartControl/cartControl.vue';
+import cartControl from 'components/cartControl/cartControl.vue';
 	export default {
 		data () {
 			return {
@@ -132,7 +142,7 @@ import cartControl from '../../cartControl/cartControl.vue';
 				if (show) {
 					this.$nextTick(() => {
 						if (!this.scroll) {
-							this.scroll = new BScroll(this.$els.listContent, {
+							this.scroll = new BScroll(this.$refs.listContent, {
 								click: true
 							});
 						} else {
@@ -160,7 +170,7 @@ import cartControl from '../../cartControl/cartControl.vue';
 					return;
 				} else {
 					this.fold = !this.fold;
-					console.log(this.fold);
+					// console.log(this.fold);
 				}
 			},
 			empty () {
@@ -176,6 +186,42 @@ import cartControl from '../../cartControl/cartControl.vue';
 					return;
 				}
 				window.alert(`支付${this.totalPrice}元`);
+			},
+			beforeDrop(el) {
+				let count = this.balls.length;
+				while (count--) {
+				let ball = this.balls[count];
+				if (ball.show) {
+					let rect = ball.el.getBoundingClientRect();
+					let x = rect.left - 32;
+					let y = -(window.innerHeight - rect.top - 22);
+					el.style.display = '';
+					el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+					el.style.transform = `translate3d(0,${y}px,0)`;
+					let inner = el.getElementsByClassName('inner-hook')[0];
+					inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+					inner.style.transform = `translate3d(${x}px,0,0)`;
+					}
+				}
+			},
+			dropping(el, done) {
+			/* eslint-disable no-unused-vars */
+			let rf = el.offsetHeight;
+				this.$nextTick(() => {
+					el.style.webkitTransform = 'translate3d(0,0,0)';
+					el.style.transform = 'translate3d(0,0,0)';
+					let inner = el.getElementsByClassName('inner-hook')[0];
+					inner.style.webkitTransform = 'translate3d(0,0,0)';
+					inner.style.transform = 'translate3d(0,0,0)';
+					el.addEventListener('transitionend', done);
+					});
+				},
+			afterDrop(el) {
+				let ball = this.dropBalls.shift();
+				if (ball) {
+					ball.show = false;
+					el.style.display = 'none';
+				}
 			}
 		},
 		transitions: {
@@ -320,25 +366,24 @@ import cartControl from '../../cartControl/cartControl.vue';
 				left: 32px
 				bottom: 22px
 				z-index: 200
-				&.drop-transition
-					transition: all 0.4s cubic-bezier(0.49,-0.29,0.75,0.41)
-					.inner
-						width: 16px
-						height: 16px
-						border-radius: 50%
-						background: rgb(0,160,220)		
-						transition: all 0.4s linear
+				transition: all 0.4s cubic-bezier(0.49,-0.29,0.75,0.41)
+				.inner
+					width: 16px
+					height: 16px
+					border-radius: 50%
+					background: rgb(0,160,220)		
+					transition: all 0.4s linear
 		.shopcart-list
 			position: absolute
 			left: 0
 			top: 0
 			z-index: -1
 			width: 100% 
-			&.fold-transition
+			transform: translate3D(0,-100%,0)
+			&.fold-enter-active, &.fold-leave-active
 				transition: all 0.5s
-				transform: translate3D(0,-100%,0)
-			&.fold-enter, &.fold-leave
-				transform: translate3D(0,0,0)
+			&.fold-enter, &.fold-leave-active
+				transform: translate3d(0, 0, 0)
 			.list-header
 				height: 40px
 				line-height: 40px
@@ -387,11 +432,11 @@ import cartControl from '../../cartControl/cartControl.vue';
 		height: 100%
 		z-index: 40
 		background-filter: blur(10px)
-		&.fade-transition
+		opacity: 1
+		background: rgba(1,17,27,0.6)
+		&.fade-enter-active, &.fade-leave-active
 			transition: all 0.5s
-			opacity: 1
-			background: rgba(1,17,27,0.6)
-		&.fade-enter,&.fade-leave
+		&.fade-enter, &.fade-leave-active
 			opacity: 0
-			background: rgba(7,17,27,0)
+			background: rgba(7, 17, 27, 0)
 </style>
